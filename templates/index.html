@@ -1,0 +1,1090 @@
+{% extends "base.html" %}
+
+{% block title %}
+SAARTHI | Integrated Government Scheme & Citizen Benefit Tracker
+{% endblock %}
+
+{% block content %}
+
+<!-- ===========================================================
+                     PREMIUM HERO SECTION
+============================================================ -->
+<!-- TEST 123456 -->
+<section class="hero-section text-white py-5 position-relative overflow-hidden">
+
+    <div class="hero-backdrop"></div>
+
+    <div class="hero-shape shape-1"></div>
+    <div class="hero-shape shape-2"></div>
+    <div class="hero-shape shape-3"></div>
+
+    <div class="container px-lg-5 position-relative z-1 py-5">
+
+        <div class="row align-items-center g-5">
+
+            <!-- LEFT CONTENT -->
+
+            <div class="col-lg-7">
+
+                <span class="badge bg-warning text-dark px-4 py-2 rounded-pill fw-bold shadow-sm mb-4">
+
+                    <i class="fa-solid fa-shield-halved me-2"></i>
+
+                    Secure Government Digital Portal
+
+                </span>
+
+                <h1 class="display-3 fw-bold mb-4 hero-title">
+
+                    Empowering Every Citizen
+
+                    <span class="text-warning d-block">
+
+                        Through Smart Government Services
+
+                    </span>
+
+                </h1>
+
+                <p class="lead text-light opacity-90 mb-4">
+
+                    Discover Central and State Government welfare schemes,
+
+                    check eligibility instantly, upload documents with OCR,
+
+                    apply online and track your applications from one secure portal.
+
+                </p>
+
+                <div class="d-flex flex-wrap gap-3">
+
+                    <a href="{{ url_for('auth.register') }}"
+                       class="btn btn-warning btn-lg rounded-pill px-5 shadow">
+
+                        <i class="fa-solid fa-user-plus me-2"></i>
+
+                        Register Now
+
+                    </a>
+
+                    <a href="{{ url_for('schemes.list_schemes') }}"
+                       class="btn btn-outline-light btn-lg rounded-pill px-5">
+
+                        <i class="fa-solid fa-layer-group me-2"></i>
+
+                        Explore Schemes
+
+                    </a>
+
+                </div>
+
+                <div class="row mt-5 g-4">
+
+                    <div class="col-6 col-md-3">
+
+                        <div class="hero-stat">
+
+                            <h3 class="counter" data-target="{{ stats.total_schemes }}">0</h3>
+
+                            <small> Schemes</small>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-6 col-md-3">
+
+                        <div class="hero-stat">
+
+                            <h3 class="counter" data-target="{{ stats.total_citizens }}">0</h3>
+
+                            <small>Citizens</small>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-6 col-md-3">
+
+                        <div class="hero-stat">
+
+                            <h3 class="counter" data-target="{{ stats.total_applications }}">0</h3>
+
+                            <small>Applications</small>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-6 col-md-3">
+
+                        <div class="hero-stat">
+
+                            <h3>24×7</h3>
+
+                            <small>Support</small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+                        <!-- RIGHT HERO CARD -->
+
+            <div class="col-lg-5">
+
+                <div class="hero-card shadow-lg">
+
+                    <div class="d-flex align-items-center mb-4">
+
+                        <div class="hero-avatar">
+
+                            <i class="fa-solid fa-id-card"></i>
+
+                        </div>
+
+                        <div class="ms-3">
+
+                            <h5 class="mb-1 fw-bold">
+
+                                Citizen Registration
+
+                            </h5>
+
+                            <small class="text-success">
+
+                                <i class="fa-solid fa-circle-check me-1"></i>
+
+                                Create your SAARTHI account to access government schemes.
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                    <hr>
+
+                    <div class="mb-4">
+
+                        <div class="d-flex justify-content-between">
+
+                            <span>Aadhaar Status</span>
+
+                            <strong class="text-success">
+
+                                Linked
+
+                            </strong>
+
+                        </div>
+
+                        <div class="progress mt-2" style="height:8px;">
+
+                            <div class="progress-bar bg-success"
+
+                                 style="width:100%;">
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="feature-box mb-3">
+
+                        <i class="fa-solid fa-file-lines text-primary"></i>
+
+                        <div>
+
+                            <h6 class="mb-1">
+
+                                OCR Document Scanner
+
+                            </h6>
+
+                            <small>
+
+                                Extracts Aadhaar, PAN, Income & Caste Certificate automatically.
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                    
+                    
+
+                    <div class="feature-box mb-3">
+
+                        <i class="fa-solid fa-bell text-warning"></i>
+
+                        <div>
+
+                            <h6 class="mb-1">
+
+                                Real-Time Notifications
+
+                            </h6>
+
+                            <small>
+
+                                SMS, Email and Dashboard alerts for every application update.
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                    <div class="feature-box">
+
+                        <i class="fa-solid fa-robot text-info"></i>
+
+                        <div>
+
+                            <h6 class="mb-1">
+
+                                AI Chat Assistant
+
+                            </h6>
+
+                            <small>
+
+                                Ask questions and receive instant guidance about government schemes.
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                    <div class="mt-4 text-center">
+
+                        <span class="badge bg-success px-3 py-2">
+
+                            OCR Enabled
+
+                        </span>
+
+                        <span class="badge bg-primary px-3 py-2">
+
+                            e-KYC
+
+                        </span>
+
+                        <span class="badge bg-warning text-dark px-3 py-2">
+
+                            DBT Ready
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+<!-- ===========================================================
+                SMART ELIGIBILITY FINDER
+=========================================================== -->
+
+<section id="eligibilityFinder" class="py-5 bg-light">
+
+    <div class="container">
+
+        <div class="text-center mb-5">
+
+            <span class="badge bg-primary px-4 py-2 rounded-pill">
+
+                AI Powered Eligibility Checker
+
+            </span>
+
+            <h2 class="display-5 fw-bold mt-3">
+
+                Find Government Schemes You Are Eligible For
+
+            </h2>
+
+            <p class="text-muted">
+
+                Enter your details below and let SAARTHI recommend the best Central & State Government schemes for you.
+
+            </p>
+
+        </div>
+
+        <div class="card shadow-lg border-0 rounded-4">
+
+            <div class="card-body p-5">
+
+                <form id="eligibilityForm" class="row g-4">
+
+                    <div class="col-lg-3">
+
+                        <label class="form-label fw-bold">
+
+                            Age
+
+                        </label>
+
+                        <input
+                            type="number"
+                            class="form-control form-control-lg"
+                            id="age"
+                            placeholder="Enter Age">
+
+                    </div>
+
+                    <div class="col-lg-3">
+
+                        <label class="form-label fw-bold">
+
+                            Annual Income
+
+                        </label>
+
+                        <input
+                            type="number"
+                            class="form-control form-control-lg"
+                            id="income"
+                            placeholder="Annual Income">
+
+                    </div>
+
+                    <div class="col-lg-3">
+
+                        <label class="form-label fw-bold">
+
+                            Gender
+
+                        </label>
+
+                        <select
+                            class="form-select form-select-lg"
+                            id="gender">
+
+                            <option value="">Select</option>
+
+                            <option>Male</option>
+
+                            <option>Female</option>
+
+                            <option>Other</option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-lg-3">
+
+                        <label class="form-label fw-bold">
+
+                            Category
+
+                        </label>
+
+                        <select
+                            class="form-select form-select-lg"
+                            id="category">
+
+                            <option value="">Select</option>
+
+                            <option>General</option>
+
+                            <option>OBC</option>
+
+                            <option>SC</option>
+
+                            <option>ST</option>
+
+                            <option>EWS</option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-lg-4">
+
+                        <label class="form-label fw-bold">
+
+                            Occupation
+
+                        </label>
+
+                        <select
+                            class="form-select form-select-lg"
+                            id="occupation">
+
+                            <option value="">Select</option>
+
+                            <option>Student</option>
+
+                            <option>Farmer</option>
+
+                            <option>Business</option>
+
+                            <option>Self Employed</option>
+
+                            <option>Government Employee</option>
+
+                            <option>Private Employee</option>
+
+                            <option>Unemployed</option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-lg-4">
+
+                        <label class="form-label fw-bold">
+
+                            State
+
+                        </label>
+
+                        <select
+                            class="form-select form-select-lg"
+                            id="state">
+
+                            <option value="">Select State</option>
+
+                            <option>Maharashtra</option>
+
+                            <option>Gujarat</option>
+
+                            <option>Karnataka</option>
+
+                            <option>Delhi</option>
+
+                            <option>Rajasthan</option>
+
+                            <option>Uttar Pradesh</option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-lg-4">
+
+                        <label class="form-label fw-bold">
+
+                            Disability
+
+                        </label>
+
+                        <select
+                            class="form-select form-select-lg"
+                            id="disability">
+
+                            <option>No</option>
+
+                            <option>Yes</option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-12 text-center mt-4">
+
+                        <button
+                            type="button"
+                            id="checkEligibilityBtn"
+                            class="btn btn-primary btn-lg px-5 rounded-pill">
+
+                            <i class="fa-solid fa-magnifying-glass me-2"></i>
+
+                            Check Eligibility
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        <!-- Results -->
+
+        <div
+            id="eligibilityResults"
+            class="row mt-5"
+            style="display:none;">
+
+        </div>
+
+    </div>
+
+</section>
+<!-- ===========================================================
+                GOVERNMENT SCHEME CATEGORIES
+=========================================================== -->
+
+<section id="categories" class="py-5">
+
+    <div class="container">
+
+        <div class="text-center mb-5">
+
+            <span class="badge bg-success px-4 py-2 rounded-pill">
+
+                Explore Categories
+
+            </span>
+
+            <h2 class="display-5 fw-bold mt-3">
+
+                Government Scheme Categories
+
+            </h2>
+
+            <p class="text-muted">
+
+                Browse schemes based on your needs and eligibility.
+
+            </p>
+
+        </div>
+
+        <div class="row g-4">
+
+            <!-- Agriculture -->
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="category-card text-center">
+
+                    <div class="category-icon bg-success">
+
+                        <i class="fa-solid fa-seedling"></i>
+
+                    </div>
+
+                    <h5 class="mt-4">Agriculture</h5>
+
+                    <p class="text-muted">
+
+                        PM-KISAN, Crop Insurance, Farmer Welfare Schemes.
+
+                    </p>
+
+                    <a href="{{ url_for('schemes.list_schemes', category='Agriculture') }}"
+                       class="btn btn-outline-success rounded-pill">
+
+                        View Schemes
+
+                    </a>
+
+                </div>
+
+            </div>
+
+            <!-- Education -->
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="category-card text-center">
+
+                    <div class="category-icon bg-warning">
+
+                        <i class="fa-solid fa-graduation-cap"></i>
+
+                    </div>
+
+                    <h5 class="mt-4">Education</h5>
+
+                    <p class="text-muted">
+
+                        Scholarships, Student Loans and Skill Development.
+
+                    </p>
+
+                    <a href="{{ url_for('schemes.list_schemes', category='Education') }}"
+                       class="btn btn-outline-warning rounded-pill">
+
+                        View Schemes
+
+                    </a>
+
+                </div>
+
+            </div>
+
+            <!-- Healthcare -->
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="category-card text-center">
+
+                    <div class="category-icon bg-danger">
+
+                        <i class="fa-solid fa-heart-pulse"></i>
+
+                    </div>
+
+                    <h5 class="mt-4">Healthcare</h5>
+
+                    <p class="text-muted">
+
+                        Ayushman Bharat, Medical Assistance and Health Support.
+
+                    </p>
+
+                    <a href="{{ url_for('schemes.list_schemes', category='Healthcare') }}"
+                       class="btn btn-outline-danger rounded-pill">
+
+                        View Schemes
+
+                    </a>
+
+                </div>
+
+            </div>
+
+            <!-- Women -->
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="category-card text-center">
+
+                    <div class="category-icon bg-primary">
+
+                        <i class="fa-solid fa-person-dress"></i>
+
+                    </div>
+
+                    <h5 class="mt-4">Women Welfare</h5>
+
+                    <p class="text-muted">
+
+                        Ladki Bahin, Beti Bachao and Financial Support.
+
+                    </p>
+
+                    <a href="{{ url_for('schemes.list_schemes', category='Women') }}"
+                       class="btn btn-outline-primary rounded-pill">
+
+                        View Schemes
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        
+
+            <!-- Housing -->
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="category-card text-center">
+
+                    <div class="category-icon bg-info">
+
+                        <i class="fa-solid fa-house"></i>
+
+                    </div>
+
+                    <h5 class="mt-4">Housing</h5>
+
+                    <p class="text-muted">
+
+                        PMAY, affordable housing assistance, rural and urban housing schemes.
+
+                    </p>
+
+                    <a href="{{ url_for('schemes.list_schemes', category='Housing') }}"
+                    class="btn btn-outline-info rounded-pill">
+
+                        View Schemes
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- Employment -->
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="category-card text-center">
+
+                    <div class="category-icon bg-secondary">
+
+                        <i class="fa-solid fa-briefcase"></i>
+
+                    </div>
+
+                    <h5 class="mt-4">Employment</h5>
+
+                    <p class="text-muted">
+
+                        Skill India, employment exchange, apprenticeship and job support.
+
+                    </p>
+
+                    <a href="{{ url_for('schemes.list_schemes', category='Employment') }}"
+                    class="btn btn-outline-secondary rounded-pill">
+
+                        View Schemes
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- Pension -->
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="category-card text-center">
+
+                    <div class="category-icon bg-dark">
+
+                        <i class="fa-solid fa-hand-holding-heart"></i>
+
+                    </div>
+
+                    <h5 class="mt-4">Pension</h5>
+
+                    <p class="text-muted">
+
+                        Senior citizen, widow and disability pension schemes.
+
+                    </p>
+
+                    <a href="{{ url_for('schemes.list_schemes', category='Pension') }}"
+                    class="btn btn-outline-dark rounded-pill">
+
+                        View Schemes
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- Entrepreneurship -->
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="category-card text-center">
+
+                    <div class="category-icon bg-primary">
+
+                        <i class="fa-solid fa-lightbulb"></i>
+
+                    </div>
+
+                    <h5 class="mt-4">Entrepreneurship</h5>
+
+                    <p class="text-muted">
+
+                        Startup India, Stand-Up India, Mudra loans and MSME support.
+
+                    </p>
+
+                    <a href="{{ url_for('schemes.list_schemes', category='Entrepreneurship') }}"
+                    class="btn btn-outline-primary rounded-pill">
+
+                        View Schemes
+
+                    </a>
+
+        </div> <!-- category-card -->
+
+</div> <!-- col -->
+
+</div> <!-- row -->
+
+</div> <!-- container -->
+
+</section>
+
+<!-- ===========================================================
+                FEATURED GOVERNMENT SCHEMES
+=========================================================== -->
+
+<section id="featuredSchemes" class="py-5 bg-light">
+
+    <div class="container">
+
+        <div class="text-center mb-5">
+
+            <span class="badge bg-warning text-dark px-4 py-2 rounded-pill">
+
+                Most Popular
+
+            </span>
+
+            <h2 class="display-5 fw-bold mt-3">
+
+                Featured Government Schemes
+
+            </h2>
+
+            <p class="text-muted">
+
+                Discover the most popular Central and State Government welfare schemes available through Saarthi.
+
+            </p>
+
+        </div>
+
+        <div class="row g-4">
+
+            {% if featured_schemes %}
+
+                {% for scheme in featured_schemes[:3] %}
+
+                <div class="col-lg-4 col-md-6">
+
+                    <div class="scheme-card h-100">
+
+                        <div class="scheme-top">
+
+                            <span class="scheme-category">
+
+                                {{ scheme.category }}
+
+                            </span>
+
+                            <button class="bookmark-btn">
+
+                                <i class="fa-regular fa-bookmark"></i>
+
+                            </button>
+
+                        </div>
+
+                        <div class="scheme-content">
+
+                            <h4 class="fw-bold mb-3">
+
+                                {{ scheme.title }}
+
+                            </h4>
+
+                            <p class="text-muted">
+
+                                {{ scheme.description[:140] }}...
+
+                            </p>
+
+                            <div class="scheme-details">
+
+                                <div>
+
+                                    <i class="fa-solid fa-indian-rupee-sign text-success"></i>
+
+                                    <strong>{{ scheme.benefit_amount or "Benefit Available" }}</strong>
+
+                                </div>
+
+                                <div>
+
+                                    <i class="fa-solid fa-users text-primary"></i>
+
+                                    {{ scheme.target_occupation }}
+
+                                </div>
+
+                            </div>
+
+                            <div class="mt-4 d-flex gap-2">
+
+                                <a href="{{ url_for('schemes.scheme_detail', scheme_id=scheme.id) }}"
+                                   class="btn btn-outline-primary flex-fill">
+
+                                    View Details
+
+                                </a>
+
+                                <a href="{{ url_for('applications.application_wizard', scheme_id=scheme.id) }}"
+                                   class="btn btn-primary flex-fill">
+
+                                    Apply
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="col-12">
+
+                    <div class="alert alert-info text-center">
+
+                        <i class="fa-solid fa-circle-info me-2"></i>
+
+                        Featured schemes will appear here once they are added by the administrator.
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</section>
+<!-- ===========================================================
+            FEATURED SCHEMES CTA
+=========================================================== -->
+
+<div class="container pb-5">
+
+    <div class="featured-bottom">
+
+        <div class="row align-items-center g-4">
+
+            <div class="col-lg-8">
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+
+                        <div class="mini-feature">
+
+                            <div class="mini-icon bg-success">
+
+                                <i class="fa-solid fa-circle-check"></i>
+
+                            </div>
+
+                            <div>
+
+                                <h6 class="fw-bold mb-1">
+                                    Verified Schemes
+                                </h6>
+
+                                <small class="text-muted">
+                                    Official Central & State Government welfare schemes.
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <div class="mini-feature">
+
+                            <div class="mini-icon bg-primary">
+
+                                <i class="fa-solid fa-bolt"></i>
+
+                            </div>
+
+                            <div>
+
+                                <h6 class="fw-bold mb-1">
+                                    Fast Applications
+                                </h6>
+
+                                <small class="text-muted">
+                                    Apply online in just a few minutes with document verification.
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <div class="mini-feature">
+
+                            <div class="mini-icon bg-warning">
+
+                                <i class="fa-solid fa-shield-halved"></i>
+
+                            </div>
+
+                            <div>
+
+                                <h6 class="fw-bold mb-1">
+                                    Secure Portal
+                                </h6>
+
+                                <small class="text-muted">
+                                    Aadhaar linked authentication with protected citizen data.
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-4 text-lg-end text-center">
+
+                <h5 class="fw-bold mb-3">
+
+                    Explore Hundreds of Government Schemes
+
+                </h5>
+
+                <a href="{{ url_for('schemes.list_schemes') }}"
+                   class="btn btn-lg btn-primary rounded-pill px-5 shadow">
+
+                    <i class="fa-solid fa-arrow-right me-2"></i>
+
+                    View All Schemes
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ===========================================================
+                INTERACTIVE ANALYTICS DASHBOARD
+=========================================================== -->
+
+
+{% endblock %}
+
+
+
+

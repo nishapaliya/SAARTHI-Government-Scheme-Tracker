@@ -1,0 +1,13 @@
+Flask>=3.0.0
+mysql-connector-python>=8.0.0
+Werkzeug>=3.0.0
+Jinja2>=3.1.0
+matplotlib>=3.8.0
+python-dotenv>=1.0.0
+pytest>=8.0.0
+Pillow>=10.0.0
+PyMuPDF>=1.23.0
+pytesseract>=0.3.10
+
+# Brevo Email API
+sib-api-v3-sdk>=7.6.0

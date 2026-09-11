@@ -1,0 +1,446 @@
+{% extends 'base.html' %}
+
+{% block title %}Smart 5-Step Application Wizard | SAARTHI Portal{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Wizard Container -->
+    <div class="card glass-card border-0 rounded-5 shadow-2xl overflow-hidden max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="card-header bg-primary-blue text-white p-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="badge bg-warning text-dark font-outfit fw-bold px-3 py-1 rounded-pill mb-1">
+                        {{ scheme.category }}
+                    </span>
+                    <h4 class="font-outfit fw-extrabold text-white mb-0">{{ scheme.title }}</h4>
+                    <span class="fs-8 text-white-50">{{ scheme.ministry }} | Max Benefit: ₹{{ "{:,.0f}".format(scheme.benefit_amount) }}</span>
+                </div>
+                <div class="text-end d-none d-md-block">
+                    <span class="fs-8 text-white-50 d-block">Application Mode</span>
+                    <span class="badge bg-success text-white fw-bold"><i class="fa-solid fa-bolt me-1"></i> Aadhaar e-KYC Fast-Track</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Steps Bar -->
+        <div class="p-3 bg-light-surface border-bottom">
+            <div class="d-flex justify-content-between wizard-step-indicators font-outfit fs-8 fw-bold">
+                <div class="wizard-step active" id="stepIndicator-1">
+                    <span class="step-badge">1</span> <span class="d-none d-sm-inline">Personal Info</span>
+                </div>
+                <div class="wizard-step" id="stepIndicator-2">
+                    <span class="step-badge">2</span> <span class="d-none d-sm-inline">Income Profile</span>
+                </div>
+                <div class="wizard-step" id="stepIndicator-3">
+                    <span class="step-badge">3</span> <span class="d-none d-sm-inline">Document Vault</span>
+                </div>
+                <div class="wizard-step" id="stepIndicator-4">
+                    <span class="step-badge">4</span> <span class="d-none d-sm-inline">Bank & DBT</span>
+                </div>
+                <div class="wizard-step" id="stepIndicator-5">
+                    <span class="step-badge">5</span> <span class="d-none d-sm-inline">Review & Submit</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-4 p-md-5">
+            <form id="wizardForm" onsubmit="event.preventDefault(); submitWizardApplication();">
+                <input type="hidden" name="scheme_id" id="wizardSchemeId" value="{{ scheme.id }}">
+
+                <!-- STEP 1: Personal Details & Aadhaar e-KYC -->
+                <div class="wizard-pane fade-in" id="wizardStep-1">
+                    <div class="p-3 bg-blue-subtle rounded-4 mb-4 border border-primary-subtle d-flex align-items-center justify-content-between">
+                        <div>
+                            <strong class="font-outfit text-primary-blue fs-7"><i class="fa-solid fa-circle-check text-success me-1"></i> Aadhaar e-KYC Profile Autofilled</strong>
+                            <div class="fs-8 text-muted">Aadhaar: XXXX-XXXX-{{ user.aadhaar_no[-4:] }}</div>
+                        </div>
+                        <span class="badge bg-success text-white">Verified</span>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label font-outfit fw-bold fs-7">Full Name</label>
+                            <input type="text" class="form-control rounded-4 fs-7" value="{{ user.full_name }}" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label font-outfit fw-bold fs-7">Mobile Number</label>
+                            <input type="text" class="form-control rounded-4 fs-7" value="{{ user.mobile }}" readonly>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label font-outfit fw-bold fs-7">Date of Birth</label>
+                            <input type="text" class="form-control rounded-4 fs-7" value="{{ user.dob or '1992-06-15' }}" readonly>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label font-outfit fw-bold fs-7">Gender</label>
+                            <input type="text" class="form-control rounded-4 fs-7" value="{{ user.gender }}" readonly>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label font-outfit fw-bold fs-7">Social Category</label>
+                            <input type="text" class="form-control rounded-4 fs-7" value="{{ user.category }}" readonly>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 text-end">
+                        <button type="button" class="btn btn-primary-blue rounded-pill px-5 font-outfit fw-bold" onclick="goToStep(2)">
+                            Next: Socio-Economic Profile <i class="fa-solid fa-arrow-right ms-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 2: Income Profile & Category -->
+                <div class="wizard-pane fade-in" id="wizardStep-2" style="display:none;">
+                    <h6 class="font-outfit fw-bold text-primary-blue mb-3"><i class="fa-solid fa-coins me-2"></i> Annual Income & Economic Eligibility</h6>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label font-outfit fw-bold fs-7">Annual Family Income (₹)</label>
+                            <input type="number" class="form-control rounded-4 fs-7" value="{{ user.income_annual }}" required>
+                            <div class="fs-8 text-success mt-1"><i class="fa-solid fa-check me-1"></i> Eligible (Scheme Max Ceiling: ₹{{ "{:,.0f}".format(scheme.eligibility_max_income) }})</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label font-outfit fw-bold fs-7">Primary Occupation</label>
+                            <input type="text" class="form-control rounded-4 fs-7" value="{{ user.occupation }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label font-outfit fw-bold fs-7">State of Residence</label>
+                            <input type="text" class="form-control rounded-4 fs-7" value="{{ user.state }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label font-outfit fw-bold fs-7">District / Revenue Division</label>
+                            <input type="text" class="form-control rounded-4 fs-7" value="{{ user.district }}" required>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 d-flex justify-content-between">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" onclick="goToStep(1)">Back</button>
+                        <button type="button" class="btn btn-primary-blue rounded-pill px-5 font-outfit fw-bold" onclick="goToStep(3)">
+                            Next: Upload Documents <i class="fa-solid fa-arrow-right ms-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 3: Document Vault Upload -->
+                <div class="wizard-pane fade-in" id="wizardStep-3" style="display:none;">
+                    <h6 class="font-outfit fw-bold text-primary-blue mb-3"><i class="fa-solid fa-file-arrow-up me-2"></i> Required Document Attachments</h6>
+                    <p class="fs-7 text-muted mb-3">Upload required verification proofs or select pre-verified documents from your Digital Vault.</p>
+
+                    <div id="wizardRequiredDocsList" class="d-flex flex-column gap-3 mb-3">
+                        {% for req_doc in required_docs %}
+                        <div class="p-3 bg-light-surface rounded-4 border" id="reqDocRow-{{ loop.index }}" data-doc-label="{{ req_doc }}">
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                <div>
+                                    <div class="fw-bold fs-7 text-dark"><i class="fa-solid fa-file-lines text-primary me-1"></i> {{ req_doc }}</div>
+                                    <div class="fs-8 mt-1" id="reqDocStatus-{{ loop.index }}">
+                                        <span class="badge bg-secondary-subtle text-secondary rounded-pill px-2 py-1">
+                                            <i class="fa-solid fa-circle-exclamation me-1"></i> Not Attached
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-2 flex-wrap">
+                                    <select class="form-select form-select-sm rounded-4 fs-8" style="min-width:220px;"
+                                            id="reqDocVaultSelect-{{ loop.index }}"
+                                            onchange="attachVaultDocToRequirement({{ loop.index }}, this)">
+                                        <option value="">Select from Digital Vault…</option>
+                                        {% for vdoc in vault_docs %}
+                                        <option value="{{ vdoc.id }}" data-file-name="{{ vdoc.file_name }}" data-doc-type="{{ vdoc.doc_type }}">
+                                            {{ vdoc.doc_type }} — {{ vdoc.file_name }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3"
+                                            onclick="openWizardUploadModal({{ loop.index }}, '{{ req_doc|e }}')">
+                                        <i class="fa-solid fa-cloud-arrow-up me-1"></i> Upload New
+                                    </button>
+                                </div>
+                            </div>
+                            <input type="hidden" name="document_ids[]" id="reqDocId-{{ loop.index }}" value="">
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mt-4 d-flex justify-content-between">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" onclick="goToStep(2)">Back</button>
+                        <button type="button" class="btn btn-primary-blue rounded-pill px-5 font-outfit fw-bold" onclick="goToStep(4)">
+                            Next: Bank & DBT Link <i class="fa-solid fa-arrow-right ms-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 4: Bank Account & Direct Benefit Transfer (DBT) -->
+                <div class="wizard-pane fade-in" id="wizardStep-4" style="display:none;">
+                    <h6 class="font-outfit fw-bold text-primary-blue mb-3"><i class="fa-solid fa-building-columns me-2"></i> Direct Benefit Transfer (DBT) Bank Account</h6>
+
+                    <div class="card bg-success-subtle border-0 rounded-4 p-4 mb-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <i class="fa-solid fa-university fs-2 text-success"></i>
+                            <div>
+                                <h6 class="font-outfit fw-bold text-success mb-1">DBT Enabled Account Verified</h6>
+                                <div class="fs-7 text-dark"><strong>Bank Name:</strong> {{ user.bank_name or 'State Bank of India' }}</div>
+                                <div class="fs-8 text-muted">A/C No: <code>{{ user.dbt_bank_account or '918273645012' }}</code> | IFSC: <code>{{ user.ifsc_code or 'SBIN0001001' }}</code></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="fs-8 text-muted">
+                        <i class="fa-solid fa-shield-halved text-primary me-1"></i> Upon approval by the District Nodal Officer, funds will be directly credited into this bank account without any third-party handling.
+                    </p>
+
+                    <div class="mt-4 d-flex justify-content-between">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" onclick="goToStep(3)">Back</button>
+                        <button type="button" class="btn btn-primary-blue rounded-pill px-5 font-outfit fw-bold" onclick="goToStep(5)">
+                            Next: Review & Declaration <i class="fa-solid fa-arrow-right ms-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 5: Final Review & Submission -->
+                <div class="wizard-pane fade-in" id="wizardStep-5" style="display:none;">
+                    <h6 class="font-outfit fw-bold text-primary-blue mb-3"><i class="fa-solid fa-file-check me-2"></i> Final Declaration & Instant Submission</h6>
+
+                    <div class="form-check p-3 bg-light-surface rounded-4 border mb-4">
+                        <input class="form-check-input ms-0 me-2" type="checkbox" id="declarationCheck" required checked onchange="toggleSubmitButton()">
+                        <label class="form-check-label fs-7 text-dark" for="declarationCheck">
+                            I hereby declare that all information provided above is true and authentic to the best of my knowledge. I authorize the National Portal to verify my demographic details against official Aadhaar and Revenue databases.
+                        </label>
+                    </div>
+
+                    <div class="text-center py-3">
+                        <button type="submit" id="wizardSubmitBtn" class="btn btn-primary-gradient btn-lg rounded-pill px-5 font-outfit fw-bold text-white shadow-lg">
+                            <i class="fa-solid fa-paper-plane me-2"></i> Submit Application & Generate Receipt
+                        </button>
+                    </div>
+
+                    <div class="mt-4 text-start">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" onclick="goToStep(4)">Back</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Upload & Verify Modal — same Digital Vault upload UI/component (Document Type dropdown + File chooser).
+         IMPORTANT: this must stay OUTSIDE the .glass-card above. That card uses backdrop-filter (for the
+         glass effect) plus overflow-hidden; either one alone creates a new containing block that traps any
+         position:fixed descendant (like a Bootstrap modal) inside the card instead of covering the viewport,
+         which is what made this modal render dulled-out and unclickable. Keeping the modal as a sibling of
+         the card, still inside .container, avoids that. -->
+    <div class="modal fade" id="wizardUploadModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content rounded-4 border-0 shadow-2xl">
+                <div class="modal-header bg-primary-blue text-white rounded-top-4">
+                    <h5 class="modal-header-title font-outfit fw-bold mb-0">Upload & Verify Document</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="wizardVaultUploadForm" onsubmit="event.preventDefault(); submitWizardVaultDoc();">
+                        <div class="mb-3">
+                            <label class="form-label font-outfit fw-bold fs-7">Document Type</label>
+                            <select name="doc_type" id="wizardVaultDocType" class="form-select rounded-4 fs-7">
+                                <option value="Aadhaar Card">Aadhaar Card</option>
+                                <option value="PAN Card">PAN Card</option>
+                                <option value="Income Certificate">Income Certificate</option>
+                                <option value="Caste / Category Certificate">Caste / Category Certificate</option>
+                                <option value="Land Holding Record">Land Holding Record</option>
+                                <option value="Bank Account Passbook">Bank Account Passbook</option>
+                                <option value="" id="wizardVaultDocTypeOther" style="display:none;"></option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label font-outfit fw-bold fs-7">Select File (PDF / Image)</label>
+                            <input type="file" id="wizardVaultFile" class="form-control rounded-4 fs-7" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary-gradient w-100 rounded-pill py-2 font-outfit fw-bold text-white shadow-sm">
+                            Upload & Verify
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function goToStep(stepNum) {
+    document.querySelectorAll('.wizard-pane').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.wizard-step').forEach(el => el.classList.remove('active'));
+    
+    document.getElementById('wizardStep-' + stepNum).style.display = 'block';
+    document.getElementById('stepIndicator-' + stepNum).classList.add('active');
+
+    if (stepNum === 5) {
+        toggleSubmitButton();
+    }
+}
+
+// Standard vault document type options (kept in sync with the Upload & Verify modal above)
+const WIZARD_STANDARD_DOC_TYPES = ["Aadhaar Card", "PAN Card", "Income Certificate", "Caste / Category Certificate", "Land Holding Record", "Bank Account Passbook"];
+
+let wizardActiveRowIndex = null;
+
+function openWizardUploadModal(rowIndex, requiredDocLabel) {
+    wizardActiveRowIndex = rowIndex;
+
+    const select = document.getElementById('wizardVaultDocType');
+    const otherOption = document.getElementById('wizardVaultDocTypeOther');
+
+    // If the scheme's required document label matches one of the standard vault
+    // types, preselect it. Otherwise surface it as an extra option so the exact
+    // required document name is saved as the doc_type.
+    const isStandard = WIZARD_STANDARD_DOC_TYPES.some(t => t.toLowerCase() === requiredDocLabel.toLowerCase());
+    if (isStandard) {
+        otherOption.style.display = 'none';
+        select.value = WIZARD_STANDARD_DOC_TYPES.find(t => t.toLowerCase() === requiredDocLabel.toLowerCase());
+    } else {
+        otherOption.textContent = requiredDocLabel;
+        otherOption.value = requiredDocLabel;
+        otherOption.style.display = 'block';
+        select.value = requiredDocLabel;
+    }
+
+    const modal = new bootstrap.Modal(document.getElementById('wizardUploadModal'));
+    modal.show();
+}
+
+function submitWizardVaultDoc() {
+    const fileInput = document.getElementById('wizardVaultFile');
+    const docType = document.getElementById('wizardVaultDocType').value;
+    const rowIndex = wizardActiveRowIndex;
+
+    if (!fileInput.files.length) {
+        alert("Please select a file.");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
+    formData.append("doc_type", docType);
+
+    fetch("/documents/upload", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.success) {
+            alert(
+                "❌ Upload Failed\n\n" +
+                (data.message || "") +
+                "\n\n🤖 AI Verification Report\n\n" +
+                (data.verification || "")
+            );
+            return;
+        }
+
+        alert(
+            "✅ Upload Successful — Saved to Digital Vault & Attached\n\n" +
+            "🤖 AI Verification Report\n\n" +
+            data.verification
+        );
+
+        if (rowIndex !== null) {
+            markRequirementAttached(rowIndex, data.doc_id, docType, data.file_name);
+        }
+
+        // Add the freshly verified document to every "Select from Digital Vault" dropdown
+        document.querySelectorAll('select[id^="reqDocVaultSelect-"]').forEach(sel => {
+            const opt = document.createElement('option');
+            opt.value = data.doc_id;
+            opt.textContent = `${docType} — ${data.file_name}`;
+            opt.dataset.fileName = data.file_name;
+            opt.dataset.docType = docType;
+            sel.appendChild(opt);
+        });
+
+        fileInput.value = '';
+        bootstrap.Modal.getInstance(document.getElementById('wizardUploadModal')).hide();
+    })
+    .catch(error => {
+        alert("Server Error\n\n" + error);
+    });
+}
+
+function attachVaultDocToRequirement(rowIndex, selectEl) {
+
+    const option = selectEl.options[selectEl.selectedIndex];
+
+    if (!option.value)
+        return;
+
+    markRequirementAttached(
+        rowIndex,
+        option.value,
+        option.dataset.docType,
+        option.dataset.fileName
+    );
+
+    alert("Document attached successfully.");
+}
+
+function markRequirementAttached(rowIndex, docId, docType, fileName) {
+
+    // Save document id
+    document.getElementById("reqDocId-" + rowIndex).value = docId;
+
+    // Update status badge
+    document.getElementById("reqDocStatus-" + rowIndex).innerHTML = `
+        <span class="badge bg-success-subtle text-success rounded-pill px-2 py-1">
+            <i class="fa-solid fa-circle-check me-1"></i>
+            Attached: ${fileName}
+        </span>`;
+
+    // Disable dropdown
+    document.getElementById("reqDocVaultSelect-" + rowIndex).disabled = true;
+
+    // Disable Upload button
+    const uploadBtn = document.querySelector(`#reqDocRow-${rowIndex} button`);
+    uploadBtn.disabled = true;
+    uploadBtn.innerHTML = `
+        <i class="fa-solid fa-circle-check me-1"></i>
+        Uploaded
+    `;
+}
+function toggleSubmitButton() {
+    const declarationCheck = document.getElementById('declarationCheck');
+    const submitBtn = document.getElementById('wizardSubmitBtn');
+    submitBtn.disabled = !declarationCheck.checked;
+}
+
+function submitWizardApplication() {
+    const declarationCheck = document.getElementById('declarationCheck');
+    if (!declarationCheck.checked) {
+        alert("Please accept the declaration before submitting your application.");
+        declarationCheck.focus();
+        return;
+    }
+
+    const schemeId = document.getElementById('wizardSchemeId').value;
+    const formData = new FormData();
+    formData.append('scheme_id', schemeId);
+
+    document.querySelectorAll('input[id^="reqDocId-"]').forEach(input => {
+        if (input.value) {
+            formData.append('document_ids[]', input.value);
+        }
+    });
+
+    fetch('/applications/submit', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success) {
+            alert('🎉 Application Submitted Successfully!\nReference Number: ' + data.application_ref);
+            window.location.href = data.redirect_url;
+        } else {
+            alert('Error: ' + data.message);
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', toggleSubmitButton);
+</script>
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Disbursement & Deadline Reminders | SAARTHI{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="font-outfit fw-extrabold text-primary-blue mb-0"><i class="fa-solid fa-clock me-2"></i> Benefit & Deadline Reminders</h2>
+            <p class="fs-7 text-muted mb-0">Track upcoming scheme disbursement dates and document renewal deadlines.</p>
+        </div>
+        <button class="btn btn-primary-gradient text-white rounded-pill px-4 font-outfit fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#addReminderModal">
+            <i class="fa-solid fa-plus me-1"></i> Add Personal Reminder
+        </button>
+    </div>
+
+    <div class="row g-4">
+        {% for rem in reminders %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 rounded-4 shadow-sm p-4 bg-white hover-elevate">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="badge bg-blue-subtle text-primary-blue fs-9">{{ rem.reminder_type|title }}</span>
+                    <span class="text-danger font-outfit fw-bold fs-8"><i class="fa-regular fa-calendar me-1"></i> {{ rem.due_date }}</span>
+                </div>
+                <h6 class="font-outfit fw-bold text-dark mb-1">{{ rem.title }}</h6>
+                <p class="fs-8 text-muted mb-3">{{ rem.description }}</p>
+
+                <div class="border-top pt-2 text-end">
+                    <button onclick="toggleReminder({{ rem.id }})" class="btn btn-xs {% if rem.is_completed %}btn-success{% else %}btn-outline-secondary{% endif %} rounded-pill">
+                        {% if rem.is_completed %}<i class="fa-solid fa-check-double me-1"></i> Completed{% else %}Mark Complete{% endif %}
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12 text-center py-5 text-muted">
+            <i class="fa-regular fa-bell fs-1 text-secondary mb-2"></i>
+            <h6>No Active Reminders</h6>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Modal: Add Reminder -->
+<div class="modal fade" id="addReminderModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content rounded-4 border-0 shadow-2xl">
+            <div class="modal-header bg-primary-blue text-white rounded-top-4">
+                <h5 class="modal-header-title font-outfit fw-bold mb-0">Add Custom Reminder</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="addReminderForm" onsubmit="event.preventDefault(); submitReminder();">
+                    <div class="mb-3">
+                        <label class="form-label font-outfit fw-bold fs-7">Reminder Title</label>
+                        <input type="text" id="remTitle" class="form-control rounded-4 fs-7" placeholder="e.g. Scholarship Income Certificate Renewal" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label font-outfit fw-bold fs-7">Due Date</label>
+                        <input type="date" id="remDueDate" class="form-control rounded-4 fs-7" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label font-outfit fw-bold fs-7">Category</label>
+                        <select id="remType" class="form-select rounded-4 fs-7">
+                            <option value="disbursement">DBT Disbursement</option>
+                            <option value="document_renewal">Document Renewal</option>
+                            <option value="scheme_deadline">Scheme Application Deadline</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label font-outfit fw-bold fs-7">Notes / Instructions</label>
+                        <textarea id="remDesc" class="form-control rounded-4 fs-7" rows="3" placeholder="Additional details..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary-gradient w-100 rounded-pill py-2 font-outfit fw-bold text-white shadow-sm">
+                        Save Reminder
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function submitReminder() {
+    const formData = new FormData();
+    formData.append('title', document.getElementById('remTitle').value);
+    formData.append('due_date', document.getElementById('remDueDate').value);
+    formData.append('reminder_type', document.getElementById('remType').value);
+    formData.append('description', document.getElementById('remDesc').value);
+
+    fetch('/reminders/add', {
+        method: 'POST',
+        body: formData
+    })
+    .then(r => r.json())
+    .then(data => location.reload());
+}
+
+function toggleReminder(id) {
+    fetch('/reminders/toggle/' + id, { method: 'POST' })
+    .then(r => r.json())
+    .then(data => location.reload());
+}
+</script>
+{% endblock %}

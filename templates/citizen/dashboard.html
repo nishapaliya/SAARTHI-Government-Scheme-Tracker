@@ -1,0 +1,258 @@
+{% extends 'base.html' %}
+
+{% block title %}Citizen Portal Dashboard | SAARTHI{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-lg-5 py-4">
+    <!-- Welcome Header Card -->
+    <div class="card glass-morphism-blue border-0 rounded-5 p-4 mb-4 shadow-sm">
+        <div class="row align-items-center g-3">
+            <div class="col-md-7">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="avatar-circle-lg bg-primary-blue text-white fw-extrabold fs-2 shadow-sm">
+                        {{ user.full_name[:2]|upper }}
+                    </div>
+                    <div>
+                        <div class="d-flex align-items-center gap-2">
+                            <h3 class="font-outfit fw-extrabold text-primary-blue mb-0">Namaste, {{ user.full_name }}!</h3>
+                            <span class="badge bg-success text-white px-2 py-1 rounded-pill fs-8">
+                                <i class="fa-solid fa-circle-check me-1"></i> Aadhaar Verified
+                            </span>
+                        </div>
+                        <p class="fs-7 text-muted mb-0 mt-1">
+                            Aadhaar: <code>XXXX-XXXX-{{ user.aadhaar_no[-4:] }}</code> | {{ user.district }}, {{ user.state }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-5">
+                <div class="bg-white p-3 rounded-4 shadow-xs border">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fs-8 fw-bold text-muted">Profile Completion</span>
+                        <span class="fs-8 fw-bold text-primary-blue">{{ user.profile_completed }}%</span>
+                    </div>
+                    <div class="progress progress-sm rounded-pill mb-2">
+                        <div class="progress-bar bg-primary-blue" style="width: {{ user.profile_completed }}%;"></div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center fs-8 text-muted">
+                        <span><i class="fa-solid fa-building-columns text-success me-1"></i> {{ user.bank_name }} (DBT Linked)</span>
+                        <a href="{{ url_for('documents.vault') }}" class="text-primary-blue text-decoration-none fw-bold">Update Vault</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPI Summary Row -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 rounded-4 shadow-sm p-4 bg-white h-100 border-start border-primary border-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="fs-8 text-muted font-outfit uppercase fw-bold">Total Applied</span>
+                        <h3 class="font-outfit fw-extrabold text-primary-blue mb-0">{{ applications|length }}</h3>
+                    </div>
+                    <div class="icon-box bg-blue-subtle text-primary rounded-circle">
+                        <i class="fa-solid fa-file-signature fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 rounded-4 shadow-sm p-4 bg-white h-100 border-start border-success border-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="fs-8 text-muted font-outfit uppercase fw-bold">Total DBT Received</span>
+                        <h3 class="font-outfit fw-extrabold text-success mb-0">₹{{ "{:,.0f}".format(total_disbursed) }}</h3>
+                    </div>
+                    <div class="icon-box bg-success-subtle text-success rounded-circle">
+                        <i class="fa-solid fa-wallet fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 rounded-4 shadow-sm p-4 bg-white h-100 border-start border-warning border-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="fs-8 text-muted font-outfit uppercase fw-bold">Verified Vault Docs</span>
+                        <h3 class="font-outfit fw-extrabold text-warning-emphasis mb-0">{{ documents|length }}</h3>
+                    </div>
+                    <div class="icon-box bg-warning-subtle text-warning-emphasis rounded-circle">
+                        <i class="fa-solid fa-folder-check fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 rounded-4 shadow-sm p-4 bg-white h-100 border-start border-info border-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="fs-8 text-muted font-outfit uppercase fw-bold">Pending Reminders</span>
+                        <h3 class="font-outfit fw-extrabold text-info-emphasis mb-0">{{ reminders|length }}</h3>
+                    </div>
+                    <div class="icon-box bg-info-subtle text-info rounded-circle">
+                        <i class="fa-solid fa-clock fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area: Applications & Benefit Tracker -->
+    <div class="row g-4">
+        <!-- Left: Applications Tracker Table -->
+        <div class="col-lg-8">
+            <div class="card border-0 rounded-4 shadow-sm p-4 bg-white mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="font-outfit fw-extrabold text-primary-blue mb-0">
+                        <i class="fa-solid fa-list-check me-2"></i> My Application Status & Timeline
+                    </h5>
+                    <a href="{{ url_for('export.export_dbt_ledger_csv') }}" class="btn btn-sm btn-outline-secondary rounded-pill fs-8">
+                        <i class="fa-solid fa-file-csv me-1"></i> Export DBT Ledger CSV
+                    </a>
+                </div>
+
+                {% if applications %}
+                <div class="table-responsive">
+                    <table class="table align-middle table-hover fs-7">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Ref Number</th>
+                                <th>Scheme Name</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th>Disbursed</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for app in applications %}
+                            <tr>
+                                <td class="fw-bold font-outfit text-primary-blue">{{ app.application_ref }}</td>
+                                <td>{{ app.scheme_title }}</td>
+                                <td><span class="badge bg-blue-subtle text-primary-blue fs-9">{{ app.category }}</span></td>
+                                <td>
+                                    {% if app.status == 'disbursed' %}
+                                        <span class="badge bg-success-subtle text-success fw-bold px-2 py-1 rounded-pill"><i class="fa-solid fa-circle-check me-1"></i> Disbursed</span>
+                                    {% elif app.status == 'approved' %}
+                                        <span class="badge bg-primary-subtle text-primary fw-bold px-2 py-1 rounded-pill"><i class="fa-solid fa-thumbs-up me-1"></i> Approved</span>
+                                    {% elif app.status == 'rejected' %}
+                                        <span class="badge bg-danger-subtle text-danger fw-bold px-2 py-1 rounded-pill"><i class="fa-solid fa-xmark me-1"></i> Rejected</span>
+                                    {% else %}
+                                        <span class="badge bg-warning-subtle text-warning-emphasis fw-bold px-2 py-1 rounded-pill"><i class="fa-solid fa-spinner fa-spin me-1"></i> {{ app.status|replace('_', ' ')|title }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="fw-bold font-outfit text-success">
+                                    {% if app.disbursed_amount > 0 %}
+                                        ₹{{ "{:,.0f}".format(app.disbursed_amount) }}
+                                    {% else %}
+                                        <span class="text-muted fs-8">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                               <a href="{{ url_for('applications.application_tracker', ref=app.application_ref) }}"
+   class="btn btn-primary rounded-pill px-3 py-2 fw-semibold">
+    <i class="fa-solid fa-eye me-1"></i>
+    Track & Timeline
+</a>
+                                    
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5 text-muted">
+                    <i class="fa-solid fa-inbox fs-1 mb-2 text-secondary"></i>
+                    <h6>No Applications Submitted Yet</h6>
+                    <p class="fs-7">Browse featured schemes to apply with 1-click Aadhaar e-KYC.</p>
+                    <a href="{{ url_for('schemes.list_schemes') }}" class="btn btn-primary-blue rounded-pill px-4 fs-7">Explore Schemes</a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Recommended Schemes Grid -->
+            <div class="card border-0 rounded-4 shadow-sm p-4 bg-white">
+                <h5 class="font-outfit fw-extrabold text-primary-blue mb-3">
+                    <i class="fa-solid fa-wand-magic-sparkles me-2 text-warning"></i> AI Recommended Schemes For You
+                </h5>
+                <div class="row g-3">
+                    {% for rec in recommended %}
+                    <div class="col-md-6">
+                        <div class="card bg-light-surface border-0 rounded-4 p-3 hover-elevate">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-blue-subtle text-primary-blue fs-9">{{ rec.category }}</span>
+                                <span class="font-outfit fw-bold text-success fs-7">₹{{ "{:,.0f}".format(rec.benefit_amount) }}</span>
+                            </div>
+                            <h6 class="font-outfit fw-bold text-dark mb-1 fs-7">{{ rec.title }}</h6>
+                            <p class="fs-8 text-muted line-clamp-2 mb-2">{{ rec.description }}</p>
+                            <a href="{{ url_for('applications.application_wizard', scheme_id=rec.id) }}" class="btn btn-xs btn-outline-primary rounded-pill w-100">
+                                Apply Now <i class="fa-solid fa-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar: Quick Actions & Reminders -->
+        <div class="col-lg-4">
+            <!-- Quick Action Palette -->
+            <div class="card border-0 rounded-4 shadow-sm p-4 bg-white mb-4">
+                <h6 class="font-outfit fw-bold text-primary-blue mb-3"><i class="fa-solid fa-bolt me-2 text-warning"></i> Quick Actions</h6>
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('documents.vault') }}" class="btn btn-light rounded-4 text-start p-3 border d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="fw-bold text-dark fs-7"><i class="fa-solid fa-folder-open me-2 text-primary"></i> Digital Document Vault</div>
+                            <div class="fs-8 text-muted">Upload & store Aadhaar, Income certs</div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-muted fs-8"></i>
+                    </a>
+                    <a href="{{ url_for('grievances') }}" class="btn btn-light rounded-4 text-start p-3 border d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="fw-bold text-dark fs-7"><i class="fa-solid fa-headset me-2 text-danger"></i> Lodge Grievance Ticket</div>
+                            <div class="fs-8 text-muted">Report delay in DBT credit or verification</div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-muted fs-8"></i>
+                    </a>
+                    <a href="{{ url_for('reminders.list_reminders') }}" class="btn btn-light rounded-4 text-start p-3 border d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="fw-bold text-dark fs-7"><i class="fa-solid fa-calendar-check me-2 text-success"></i> Payment Reminders</div>
+                            <div class="fs-8 text-muted">Track upcoming installment dates</div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-muted fs-8"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Reminders Widget -->
+            <div class="card border-0 rounded-4 shadow-sm p-4 bg-white mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="font-outfit fw-bold text-primary-blue mb-0"><i class="fa-solid fa-clock me-2 text-warning"></i> Upcoming Reminders</h6>
+                    <a href="{{ url_for('reminders.list_reminders') }}" class="fs-8 text-primary-blue text-decoration-none">Manage</a>
+                </div>
+                {% if reminders %}
+                    {% for rem in reminders %}
+                    <div class="p-3 bg-light-surface rounded-4 mb-2 border border-light">
+                        <div class="d-flex justify-content-between fs-8 font-outfit fw-bold">
+                            <span class="text-primary-blue">{{ rem.title }}</span>
+                            <span class="text-danger"><i class="fa-regular fa-calendar me-1"></i> {{ rem.due_date }}</span>
+                        </div>
+                        <p class="fs-8 text-muted mb-0 mt-1">{{ rem.description }}</p>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-muted fs-8 text-center py-3">No active reminders pending.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

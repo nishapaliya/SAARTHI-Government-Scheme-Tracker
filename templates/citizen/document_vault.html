@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+
+{% block title %}Digital Document Vault | SAARTHI{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="font-outfit fw-extrabold text-primary-blue mb-0"><i class="fa-solid fa-vault me-2"></i> Digital Document Vault</h2>
+            <p class="fs-7 text-muted mb-0">Secure 256-bit encrypted storage for Aadhaar, Income, and Land Records.</p>
+        </div>
+        <button class="btn btn-primary-gradient text-white rounded-pill px-4 font-outfit fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#uploadDocModal">
+            <i class="fa-solid fa-cloud-arrow-up me-1"></i> Upload Document
+        </button>
+    </div>
+
+    <div class="row g-4">
+        {% for doc in docs %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 rounded-4 shadow-sm p-4 bg-white hover-elevate">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="icon-box bg-blue-subtle text-primary rounded-circle">
+                        <i class="fa-solid fa-file-pdf fs-4"></i>
+                    </div>
+                    <span class="badge bg-success-subtle text-success rounded-pill px-2 py-1 fs-9">
+                        <i class="fa-solid fa-circle-check me-1"></i> Verified
+                    </span>
+                </div>
+
+                <h6 class="font-outfit fw-bold text-dark mb-1">{{ doc.doc_type }}</h6>
+                <div class="fs-8 text-muted mb-3">{{ doc.file_name }}</div>
+
+                <div class="d-flex justify-content-between align-items-center border-top pt-3 fs-8">
+                    <span class="text-muted">
+    <i class="fa-regular fa-clock me-1"></i>
+    {{ doc.uploaded_at.strftime('%d-%m-%Y') if doc.uploaded_at else 'N/A' }}
+</span>
+                    <button onclick="deleteVaultDoc({{ doc.id }})" class="btn btn-xs btn-outline-danger rounded-pill px-2 py-1">
+                        <i class="fa-solid fa-trash me-1"></i> Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12 text-center py-5 text-muted">
+            <i class="fa-solid fa-folder-open fs-1 text-secondary mb-2"></i>
+            <h6>No Documents Uploaded Yet</h6>
+            <p class="fs-7">Upload your Aadhaar or Income Certificate to auto-attach during scheme applications.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Upload Modal -->
+<div class="modal fade" id="uploadDocModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content rounded-4 border-0 shadow-2xl">
+            <div class="modal-header bg-primary-blue text-white rounded-top-4">
+                <h5 class="modal-header-title font-outfit fw-bold mb-0">Upload to Digital Vault</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="vaultUploadForm" onsubmit="event.preventDefault(); submitVaultDoc();">
+                    <div class="mb-3">
+                        <label class="form-label font-outfit fw-bold fs-7">Document Type</label>
+                        <select name="doc_type" id="vaultDocType" class="form-select rounded-4 fs-7">
+                            <option value="Aadhaar Card">Aadhaar Card</option>
+                            <option value="PAN Card">PAN Card</option>
+                            <option value="Income Certificate">Income Certificate</option>
+                            <option value="Caste / Category Certificate">Caste / Category Certificate</option>
+                            <option value="Land Holding Record">Land Holding Record</option>
+                            <option value="Bank Account Passbook">Bank Account Passbook</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label font-outfit fw-bold fs-7">Select File (PDF / Image)</label>
+                        <input type="file" id="vaultFile" class="form-control rounded-4 fs-7" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary-gradient w-100 rounded-pill py-2 font-outfit fw-bold text-white shadow-sm">
+                        Upload to Vault
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+
+function submitVaultDoc() {
+
+    const fileInput = document.getElementById('vaultFile');
+    const docType = document.getElementById('vaultDocType').value;
+
+    if (!fileInput.files.length) {
+        alert("Please select a file.");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
+    formData.append("doc_type", docType);
+
+    fetch("/documents/upload", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+
+        if (!data.success) {
+
+            alert(
+                "❌ Upload Failed\n\n" +
+                (data.message || "") +
+                "\n\n🤖 AI Verification Report\n\n" +
+                (data.verification || "")
+            );
+
+            return;
+        }
+
+        alert(
+            "✅ Upload Successful\n\n" +
+            "🤖 AI Verification Report\n\n" +
+            data.verification
+        );
+
+        location.reload();
+
+    })
+    .catch(error => {
+        alert("Server Error\n\n" + error);
+    });
+
+}
+
+
+function deleteVaultDoc(docId) {
+
+    if (!confirm("Are you sure you want to remove this document?"))
+        return;
+
+    fetch("/documents/delete/" + docId, {
+        method: "POST"
+    })
+    .then(response => response.json())
+    .then(() => location.reload());
+
+}
+
+</script>
+{% endblock %}

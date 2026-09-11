@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}
+Browse Government Schemes | SAARTHI
+{% endblock %}
+
+{% block content %}
+
+<!-- ===========================================================
+     SCHEMES LISTING PAGE HEADER
+=========================================================== -->
+<section class="bg-primary-blue text-white py-5">
+    <div class="container">
+        <span class="badge bg-warning text-dark px-4 py-2 rounded-pill fw-bold shadow-sm mb-3">
+            <i class="fa-solid fa-layer-group me-2"></i>
+            All Government Schemes
+        </span>
+        <h1 class="font-outfit fw-extrabold mb-2">Browse Welfare Schemes</h1>
+        <p class="fs-7 text-white-50 mb-0">
+            Search and filter Central &amp; State Government schemes across Agriculture, Education,
+            Healthcare, Women Welfare, Housing, Employment, Pension and Entrepreneurship.
+        </p>
+    </div>
+</section>
+
+<!-- ===========================================================
+     SEARCH & CATEGORY FILTER BAR
+=========================================================== -->
+<section class="py-4 bg-light border-bottom">
+    <div class="container">
+        <form method="GET" action="{{ url_for('schemes.list_schemes') }}" class="row g-3 align-items-center mb-4">
+            <div class="col-md-8">
+                <div class="input-group">
+                    <span class="input-group-text bg-white">
+                        <i class="fa-solid fa-magnifying-glass text-muted"></i>
+                    </span>
+                    <input type="text" name="q" value="{{ search_q }}"
+                           class="form-control"
+                           placeholder="Search schemes by name, ministry or keyword...">
+                </div>
+            </div>
+            {% if selected_category and selected_category != 'All' %}
+            <input type="hidden" name="category" value="{{ selected_category }}">
+            {% endif %}
+            <div class="col-md-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary-gradient text-white fw-bold flex-fill">
+                    Search
+                </button>
+                {% if search_q or (selected_category and selected_category != 'All') %}
+                <a href="{{ url_for('schemes.list_schemes') }}" class="btn btn-outline-secondary">
+                    Clear
+                </a>
+                {% endif %}
+            </div>
+        </form>
+
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{{ url_for('schemes.list_schemes', q=search_q) }}"
+               class="btn btn-sm rounded-pill px-3 {{ 'btn-primary-gradient text-white' if not selected_category or selected_category == 'All' else 'btn-outline-primary' }}">
+                All Schemes
+            </a>
+            {% for cat in categories %}
+            <a href="{{ url_for('schemes.list_schemes', category=cat, q=search_q) }}"
+               class="btn btn-sm rounded-pill px-3 {{ 'btn-primary-gradient text-white' if selected_category == cat else 'btn-outline-primary' }}">
+                {{ cat }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ===========================================================
+     SCHEMES GRID
+=========================================================== -->
+<section class="py-5">
+    <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="fw-bold mb-0 font-outfit">
+                {% if selected_category and selected_category != 'All' %}
+                    {{ selected_category }} Schemes
+                {% else %}
+                    All Schemes
+                {% endif %}
+            </h5>
+            <span class="text-muted fs-8">{{ schemes|length }} scheme{{ 's' if schemes|length != 1 else '' }} found</span>
+        </div>
+
+        <div class="row g-4">
+            {% if schemes %}
+                {% for scheme in schemes %}
+                <div class="col-lg-4 col-md-6">
+                    <div class="scheme-card h-100">
+                        <div class="scheme-top">
+                            <span class="scheme-category">
+                                {{ scheme.category }}
+                            </span>
+                            <button class="bookmark-btn" type="button">
+                                <i class="fa-regular fa-bookmark"></i>
+                            </button>
+                        </div>
+                        <div class="scheme-content">
+                            <h4 class="fw-bold mb-2">
+                                {{ scheme.title }}
+                            </h4>
+                            <p class="text-muted fs-8 mb-2">
+                                <i class="fa-solid fa-building-columns me-1"></i>{{ scheme.ministry }}
+                            </p>
+                            <p class="text-muted">
+                                {{ scheme.description[:140] }}...
+                            </p>
+                            <div class="scheme-details">
+                                <div>
+                                    <i class="fa-solid fa-indian-rupee-sign text-success"></i>
+                                    <strong>{{ "{:,.0f}".format(scheme.benefit_amount) if scheme.benefit_amount else "Benefit Available" }}</strong>
+                                </div>
+                                <div>
+                                    <i class="fa-solid fa-users text-primary"></i>
+                                    {{ scheme.target_occupation }}
+                                </div>
+                            </div>
+                            <div class="mt-4 d-flex gap-2">
+                                <a href="{{ url_for('schemes.scheme_detail', scheme_id=scheme.id) }}"
+                                   class="btn btn-outline-primary flex-fill">
+                                    View Details
+                                </a>
+                                <a href="{{ url_for('applications.application_wizard', scheme_id=scheme.id) }}"
+                                   class="btn btn-primary flex-fill">
+                                    Apply
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-info text-center">
+                        <i class="fa-solid fa-circle-info me-2"></i>
+                        No schemes found matching your search. Try a different keyword or
+                        <a href="{{ url_for('schemes.list_schemes') }}">clear all filters</a>.
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

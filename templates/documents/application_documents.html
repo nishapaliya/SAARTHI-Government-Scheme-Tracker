@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Application Documents | SAARTHI{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mb-4">
+        <h2 class="font-outfit fw-extrabold text-primary-blue mb-1">
+            <i class="fa-solid fa-folder-open me-2"></i> Application Documents
+        </h2>
+        <p class="fs-7 text-muted mb-0">
+            {{ app.applicant_name }} &middot; {{ app.scheme_title }} &middot;
+            <span class="fw-bold text-primary-blue">{{ app.application_ref }}</span>
+        </p>
+    </div>
+
+    <div class="card border-0 rounded-4 shadow-sm p-4 bg-white">
+        <div class="table-responsive">
+            <table class="table align-middle table-hover fs-7">
+                <thead class="table-light">
+                    <tr>
+                        <th>Document Name</th>
+                        <th>Document Type</th>
+                        <th>Upload Date</th>
+                        <th>Preview</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for doc in docs %}
+                    <tr>
+                        <td class="fw-medium text-dark">{{ doc.file_name }}</td>
+                        <td><span class="badge bg-blue-subtle text-primary-blue fs-9">{{ doc.doc_type }}</span></td>
+                        <td class="fs-8 text-muted">{{ doc.uploaded_at.strftime('%d-%m-%Y') if doc.uploaded_at else 'N/A' }}</td>
+                        <td>
+                            <!-- Images open natively in the browser; PDFs open in the browser's built-in PDF viewer -->
+                            <a href="{{ url_for('documents.serve_file', doc_id=doc.id) }}" target="_blank" class="btn btn-xs btn-outline-primary rounded-pill px-3">
+                                <i class="fa-solid fa-eye me-1"></i> Preview
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('documents.serve_file', doc_id=doc.id, download=1) }}" class="btn btn-xs btn-primary-blue text-blue rounded-pill px-3">
+                                <i class="fa-solid fa-download me-1"></i> Download
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">
+                            <i class="fa-solid fa-folder-open fs-1 text-secondary mb-2 d-block"></i>
+                            <h6>No Documents Uploaded</h6>
+                            <p class="fs-7 mb-0">This citizen has not attached any documents to this application yet.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

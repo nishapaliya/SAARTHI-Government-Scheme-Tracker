@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ scheme.title }} | Scheme Guidelines | SAARTHI{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card glass-card border-0 rounded-5 shadow-2xl overflow-hidden max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="card-header bg-primary-blue text-white p-4 p-md-5">
+            <span class="badge bg-warning text-dark font-outfit fw-bold px-3 py-1 rounded-pill mb-2">
+                {{ scheme.category }}
+            </span>
+            <h2 class="font-outfit fw-extrabold text-white mb-2">{{ scheme.title }}</h2>
+            <p class="fs-7 text-white-50 mb-0"><i class="fa-solid fa-building-columns me-1"></i> {{ scheme.ministry }}</p>
+        </div>
+
+        <div class="card-body p-4 p-md-5">
+            <!-- Benefit Highlight Card -->
+            <div class="card bg-blue-subtle border-0 rounded-4 p-4 mb-4">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <span class="fs-8 text-muted uppercase fw-bold font-outfit">Sanction Benefit Amount</span>
+                        <h2 class="font-outfit fw-extrabold text-primary-blue mb-1">₹{{ "{:,.0f}".format(scheme.benefit_amount) }}</h2>
+                        <span class="badge bg-white text-primary-blue border fs-8">{{ scheme.benefit_type }}</span>
+                    </div>
+                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                        <a href="{{ url_for('applications.application_wizard', scheme_id=scheme.id) }}" class="btn btn-primary-gradient rounded-pill px-4 py-3 text-white font-outfit fw-bold shadow-md">
+                            <i class="fa-solid fa-paper-plane me-1"></i> Apply Now (Wizard)
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Overview -->
+            <h5 class="font-outfit fw-extrabold text-primary-blue mb-3">Scheme Overview</h5>
+            <p class="fs-7 text-secondary leading-relaxed mb-4">{{ scheme.description }}</p>
+
+            <h5 class="font-outfit fw-extrabold text-primary-blue mb-3">Benefits & Subsidies</h5>
+            <p class="fs-7 text-secondary leading-relaxed mb-4">{{ scheme.benefits_summary or "Direct Bank Transfer credited in installments directly into citizen bank account upon Aadhaar e-KYC validation." }}</p>
+
+            <!-- Eligibility Matrix -->
+            <h5 class="font-outfit fw-extrabold text-primary-blue mb-3">Eligibility Parameters</h5>
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <div class="p-3 bg-light-surface rounded-4 border fs-7">
+                        <strong>Target Age Range:</strong> {{ scheme.eligibility_min_age }} to {{ scheme.eligibility_max_age }} Years
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-3 bg-light-surface rounded-4 border fs-7">
+                        <strong>Max Income Limit:</strong> ₹{{ "{:,.0f}".format(scheme.eligibility_max_income) }} / Year
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-3 bg-light-surface rounded-4 border fs-7">
+                        <strong>Target Category:</strong> {{ scheme.target_category }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-3 bg-light-surface rounded-4 border fs-7">
+                        <strong>Occupation Target:</strong> {{ scheme.target_occupation }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Required Documents -->
+            <h5 class="font-outfit fw-extrabold text-primary-blue mb-3">Required Documents</h5>
+            <div class="p-3 bg-light-surface rounded-4 border fs-7 mb-5 text-secondary">
+                <i class="fa-solid fa-file-circle-check text-success me-2 fs-5"></i>
+                {{ scheme.documents_required or "Aadhaar Card, Annual Income Certificate, Bank Account Passbook Copy" }}
+            </div>
+
+            <div class="text-center">
+                <a href="{{ url_for('applications.application_wizard', scheme_id=scheme.id) }}" class="btn btn-primary-gradient btn-lg rounded-pill px-5 text-white font-outfit fw-bold shadow-lg">
+                    Proceed to 5-Step Application Wizard <i class="fa-solid fa-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
